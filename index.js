@@ -50,6 +50,7 @@ app.get('/api/persons', (request, response) => {
 
 app.post('/api/persons', (request, response) => {
     const body = request.body
+    console.log(body)
 
     if (!body.name) {
         return response.status(400).json({
