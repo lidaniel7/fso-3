@@ -48,7 +48,7 @@ app.get('/api/persons', (request, response) => {
     })
 })
 
-app.post('/', (request, response) => {
+app.post('/api/persons', (request, response) => {
     const body = request.body
 
     if (!body.name) {
@@ -67,7 +67,7 @@ app.post('/', (request, response) => {
 
     const person = new Person({
         name: body.name,
-        number: body.name
+        number: body.number
     })
 
     person.save().then(savedPerson => {
