@@ -48,7 +48,7 @@ app.get('/api/persons', (request, response) => {
     })
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/', (request, response) => {
     const body = request.body
 
     if (!body.name) {
