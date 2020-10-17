@@ -1,19 +1,12 @@
 const mongoose = require('mongoose')
 
-// if (process.argv.length < 6) {
-//   console.log('Please provide the password, name, and number')
-//   process.exit(1)
-// }
-
 if (process.argv.length > 6) {
     console.log('Please provide the password, name, and number')
     process.exit(1)
 }
 
-const password = process.argv[2]
-
 const url =
-  `mongodb+srv://phonebook:${password}@cluster0.n3skz.mongodb.net/phonebook-app?retryWrites=true&w=majority`
+  `mongodb+srv://phonebook:phonebook@cluster0.n3skz.mongodb.net/phonebook-app?retryWrites=true&w=majority`
 
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
 

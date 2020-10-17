@@ -1,7 +1,11 @@
+require('dotenv').config()
 const { response } = require('express')
 const express = require('express')
 const app = express()
+const Person = require('./models/person')
+
 const cors = require('cors')
+const mongoose = require('mongoose')
 
 let morgan = require('morgan')
 
@@ -9,6 +13,10 @@ app.use(cors())
 app.use(express.json())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
 app.use(express.static('build'))
+
+const url = process.env.MONGODB_URI
+
+mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
 
 
 let people = [
@@ -34,36 +42,37 @@ let people = [
     }
 ]
 
-app.get('/api/persons', (req, res) => {
-    res.json(people)
+app.get('/api/persons', (request, response) => {
+    Person.find({}).then(persons => {
+        response.json(persons)
+    })
 })
 
-app.post('/api/persons', (req, res) => {
-    person = req.body
+app.post('/api/persons', (request, response) => {
+    const body = request.body
 
-    if (!person.name) {
-        return res.status(400).json({
+    if (!body.name) {
+        return response.status(400).json({
             error: 'name missing'
         })
-    } else if (!person.number) {
-        return res.status(400).json({
+    } else if (!body.number) {
+        return response.status(400).json({
             error: 'number missing'
         })
-    } else if (people.length !== people.filter(obj => obj.name !== person.name).length) {
-        return res.status(400).json({
+    } else if (body.length !== body.filter(obj => obj.name !== body.name).length) {
+        return response.status(400).json({
             error: 'name must be unique'
         })
     }
 
-    const personObject = {
-        id: Math.floor(Math.random() * 1000000),
-        name: person.name,
-        number: person.number,
-    }
+    const person = new Person({
+        name: body.name,
+        number: body.name
+    })
 
-    people = people.concat(personObject)
-
-    res.json(people)
+    person.save().then(savedPerson => {
+        response.json(savedPerson)
+    })
 })
 
 app.get('/info', (req, res) => {
@@ -89,7 +98,8 @@ app.delete('/api/persons/:id', (req, res) => {
     res.status(204).end()
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
 })
