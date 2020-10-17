@@ -62,12 +62,14 @@ app.post('/api/persons', (request, response) => {
         return response.status(400).json({
             error: 'number missing'
         })
-    } else if (body.length !== body.filter(obj => obj.name !== body.name).length) {
-        console.log('error 3')
-        return response.status(400).json({
-            error: 'name must be unique'
-        })
-    }
+    } 
+    // else if (body.length !== body.filter(obj => obj.name !== body.name).length) {
+    //     console.log('error 3')
+    //     return response.status(400).json({
+    //         error: 'name must be unique'
+    //     })
+    // }
+    console.log('no error')
 
     const person = new Person({
         name: body.name,
