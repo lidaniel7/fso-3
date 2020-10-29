@@ -82,20 +82,23 @@ app.post('/api/persons', (request, response) => {
 })
 
 app.get('/info', (req, res) => {
-    res.write(`Phonebook has info for ${people.length} people \n`)
-    res.write(Date())
-    res.end()
+    Person.find({}).then(persons => {
+        res.write(`Phonebook has info for ${persons.length} people \n`)
+        res.write(Date())
+        res.end()
+    })
 })
 
 app.get('/api/persons/:id', (req, res) => {
-    const id = Number(req.params.id)
-    const person = people.find(person => person.id === id)
-    
-    if (person) {
-        res.json(person)
-    } else {
-        res.status(404).end()
-    }
+    Person.findById(req.params.id)
+        .then(person => {
+            if (person) {
+                res.json(person)
+            } else {
+                res.status(404).end()
+            }
+        })
+        .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (req, res, next) => {
@@ -105,6 +108,8 @@ app.delete('/api/persons/:id', (req, res, next) => {
         })
         .catch(error => next(error))
 })
+
+app.put('')
 
 const errorHandler = (error, request, response, next) => {
     console.error(error.message)
