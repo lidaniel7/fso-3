@@ -14,33 +14,10 @@ app.use(express.json())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
 app.use(express.static('build'))
 
-const url = process.env.MONGODB_URI
+// const url = process.env.MONGODB_URI
 
-mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
+// mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
 
-
-let people = [
-    {
-        id: 1,
-        name: "Arto Hellas",
-        number: "040-123456"
-    },
-    {
-        id: 2,
-        name: "Ada Lovelace",
-        number: "39-44-5323523"
-    },
-    {
-        id: 3,
-        name: "Dan Abramov",
-        number: "12-43-234345"
-    },
-    {
-        id: 4,
-        name: "Mary Poppendick",
-        number: "39-23-6423122"
-    }
-]
 
 app.get('/api/persons', (request, response) => {
     Person.find({}).then(persons => {
@@ -48,7 +25,7 @@ app.get('/api/persons', (request, response) => {
     })
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
     const body = request.body
     console.log(body)
 
@@ -61,7 +38,7 @@ app.post('/api/persons', (request, response) => {
         console.log('error 2')
         return response.status(400).json({
             error: 'number missing'
-        })
+        })c
     } 
     // else if (body.length !== body.filter(obj => obj.name !== body.name).length) {
     //     console.log('error 3')
@@ -76,9 +53,11 @@ app.post('/api/persons', (request, response) => {
         number: body.number
     })
 
-    person.save().then(savedPerson => {
-        response.json(savedPerson)
-    })
+    person.save()
+        .then(savedPerson => {
+            response.json(savedPerson)
+        })
+        .catch(error => next(error))
 })
 
 app.get('/info', (req, res) => {
@@ -133,6 +112,8 @@ const errorHandler = (error, request, response, next) => {
     console.error(error.message)
     if (error.name === 'CastError') {
         return response.status(400).send({ error: 'malformatted id' })
+    } else if (error.name === 'ValidationError') {
+        return response.status(400).send({ error: 'expected name needs to be unique' })
     }
 
     next(error)
