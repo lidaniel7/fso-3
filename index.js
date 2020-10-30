@@ -14,9 +14,9 @@ app.use(express.json())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'))
 app.use(express.static('build'))
 
-// const url = process.env.MONGODB_URI
+const url = process.env.MONGODB_URI
 
-// mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
+mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
 
 
 app.get('/api/persons', (request, response) => {
@@ -38,7 +38,7 @@ app.post('/api/persons', (request, response, next) => {
         console.log('error 2')
         return response.status(400).json({
             error: 'number missing'
-        })c
+        })
     } 
     // else if (body.length !== body.filter(obj => obj.name !== body.name).length) {
     //     console.log('error 3')
